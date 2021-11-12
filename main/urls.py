@@ -25,6 +25,8 @@ from registration.views import (
     RegistrationView, 
     LoginView
     )
+
+from pagination_example.views import pagination_view
 from registration.user_profile.views import ProfileView
 
 urlpatterns = [
@@ -34,6 +36,7 @@ urlpatterns = [
     path('rating/<int:pk>/', RatingsDetailView.as_view()),
     path('register/', RegistrationView.as_view()),
     path('login/', LoginView.as_view(), name='login'),
+    path('pagination_example/', pagination_view),
     path('accounts/profile/', ProfileView.as_view()),
     # path('form/', SimpleFormView.as_view()),
 ]

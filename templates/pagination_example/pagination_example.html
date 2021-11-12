@@ -1,0 +1,9 @@
+{% if page > 0 and page != 1 %}
+    <a href="?page={{ prev }}">prev</a>
+{% endif %}
+{% for d in data_list %}
+    {{ d }}
+{% endfor %}
+{% if page > data_list %}
+    <a href="?page={{ next }}">Next</a>
+{% endif %}
