@@ -6,13 +6,36 @@ from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from django.views.generic import ListView, DetailView
-from .models import Rating
+from .models import Rating, Subject
+from django.views.generic.edit import FormMixin
+from .forms import RateForm
+from django.urls import reverse
 
-class RatingsDetailView(DetailView):
-    model = Rating
+class RatingsDetailView(FormMixin, DetailView):
+    model = Subject
+    template_name = 'rating/rating_detail.html'
+    form_class = RateForm
+
+    def get_success_url(self):
+        return reverse('main')
+
+    def post(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        form = self.get_form()
+        if form.is_valid():
+            user = request.user
+            rating = Rating(user=user, rate=form.data['rate'])
+            rating.save()
+            self.object.rating.add(rating)
+            self.object.save()
+            return self.form_valid(form)
+        else:
+            self.form_invalid(form)
 
 class RatingsListView(ListView):
-    queryset = Rating.objects.all()
+    model = Subject
+    paginate_by = 5
+    template_name = 'rating/rating_list.html'
     context_object_name = 'rating_objects'
 
     def get_context_data(self, **kwargs):
@@ -25,7 +48,7 @@ class RatingsEntryListView(ListView):
     context_object_name = 'rating_name_objects'
 
     def get_queryset(self):
-        return Rating.objects.filter(name=self.kwargs['name'])
+        return Subject.objects.filter(name=self.kwargs['name'])
 
 class SimpleFormView(View):
     form_class = SimpleForm
