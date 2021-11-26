@@ -1,5 +1,4 @@
 from django.db import models
-from django.db import models
 from django.contrib.auth.models import User
 from django.db.models import Avg
 
@@ -15,6 +14,9 @@ class Rating(models.Model):
     user = models.ForeignKey(User, null=True, on_delete=models.SET_NULL)
     date = models.DateTimeField(auto_now_add=True)
     rate = models.IntegerField(choices=Rate.choices)
+
+    def __str__(self):
+        return f'rating {self.rate} by user {self.user.username}'
 
 class Subject(models.Model):
     class Meta:
